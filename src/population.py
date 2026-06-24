@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def chronotope_non_residential(B:np.ndarray,O:np.ndarray)-> np.ndarray:
+def compute_non_residential_pop(B:np.ndarray,O:np.ndarray)-> np.ndarray:
     """
     Calculates the population in non-residential buildings at time t in each grid.
     
@@ -11,7 +11,7 @@ def chronotope_non_residential(B:np.ndarray,O:np.ndarray)-> np.ndarray:
         T: Number of time steps.
 
     Args:
-        B (np.ndarray): Shape (N,J). The total floor area of each non-residential building type per grid cell.
+        B (np.ndarray): Shape (N,J). The total area of each non-residential building type per grid cell.
         O (np.ndarray): Shape (J,T). The occupancy density for each building type at each time step.
 
     Returns:
@@ -21,9 +21,9 @@ def chronotope_non_residential(B:np.ndarray,O:np.ndarray)-> np.ndarray:
     return C_n
 
 
-def ratio(P_r:np.ndarray,C_n) -> np.ndarray:
+def compute_global_decrease_ratio(P_r:np.ndarray,C_n) -> np.ndarray:
     """
-    Calculates the average decreasing ratio of the population in residential buildings.
+    Calculates the average decreasing ratio of the population in residential buildings across all grids.
 
     Args:
         P_r (np.ndarray): Shape (N,). The base residential population within each grid cell.
@@ -36,7 +36,7 @@ def ratio(P_r:np.ndarray,C_n) -> np.ndarray:
     return np.sum(C_n,axis=0) / np.sum(P_r)
 
 
-def Chronotope_residential(P_r: np.ndarray,ratio:np.ndarray) -> np.ndarray:
+def compute_residential_pop(P_r: np.ndarray,ratio:np.ndarray) -> np.ndarray:
     """
     Calculates the the population in residential buildings at time t in each grid.
 
@@ -51,9 +51,9 @@ def Chronotope_residential(P_r: np.ndarray,ratio:np.ndarray) -> np.ndarray:
     return C_r
 
 
-def Chronotope_grid(C_r,C_n):
+def compute_grid_pop(C_r,C_n):
     
-    return C_r+C_n
+    return C_r + C_n
 
     
 
@@ -64,6 +64,6 @@ if __name__ == "__main__":
         [0,2,1,2],
         [0,2,3,3]
         ])
-    r = ratio(a,b)
-    C_r = Chronotope_residential(a,r)
-    print(Chronotope_grid(C_r,b))
+    r = compute_global_decrease_ratio(a,b)
+    C_r = compute_residential_pop(a,r)
+    print(compute_grid_pop(C_r,b))

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def compute_non_residential_pop(B:np.ndarray,O:np.ndarray)-> np.ndarray:
+def compute_non_residential_pop(A:np.ndarray,D:np.ndarray)-> np.ndarray:
     """
     Calculates the population in non-residential buildings at time t in each grid.
     
@@ -11,49 +11,49 @@ def compute_non_residential_pop(B:np.ndarray,O:np.ndarray)-> np.ndarray:
         T: Number of time steps.
 
     Args:
-        B (np.ndarray): Shape (N,J). The total area of each non-residential building type per grid cell.
-        O (np.ndarray): Shape (J,T). The occupancy density for each building type at each time step.
+        A (np.ndarray): Shape (N,J). The total area of each non-residential building type per grid cell.
+        D (np.ndarray): Shape (J,T). The occupancy density for each building type at each time step.
 
     Returns:
         np.ndarray: Shape (N,T). The population in non-residential buildings at time t in each grid.
     """
-    C_n = np.dot(B,O)
-    return C_n
+    P_nres = np.dot(A,D)
+    return P_nres
 
 
-def compute_global_decrease_ratio(P_r:np.ndarray,C_n) -> np.ndarray:
+def compute_global_decrease_ratio(P_base:np.ndarray,P_nres) -> np.ndarray:
     """
     Calculates the average decreasing ratio of the population in residential buildings across all grids.
 
     Args:
-        P_r (np.ndarray): Shape (N,). The base residential population within each grid cell.
-        C_n (np.ndarray): Shape (N,T). The  non-residential population within each grid cell at each time step.
+        P_base (np.ndarray): Shape (N,). The base residential population within each grid cell.
+        P_nres (np.ndarray): Shape (N,T). The  non-residential population within each grid cell at each time step.
 
 
     Returns:
         np.ndarray: Shape (T,). The average decreasing ratio of the population in residential buildings across all grids at each time step.
     """
-    return np.sum(C_n,axis=0) / np.sum(P_r)
+    return np.sum(P_nres,axis=0) / np.sum(P_base)
 
 
-def compute_residential_pop(P_r: np.ndarray,ratio:np.ndarray) -> np.ndarray:
+def compute_residential_pop(P_base: np.ndarray,ratio:np.ndarray) -> np.ndarray:
     """
     Calculates the the population in residential buildings at time t in each grid.
 
     Args:
-        P_r (np.ndarray): Shape (N,). The base residential population within each grid cell.
+        P_base (np.ndarray): Shape (N,). The base residential population within each grid cell.
         ratio (np.ndarray): Shape (T,). The average decreasing ratio of the population in residential buildings across all grids at each time step.
 
     Returns:
         np.ndarray: Shape (N,T). The population in residential buildings at time t in each grid
     """
-    C_r = P_r[:,np.newaxis] * (1-ratio)
-    return C_r
+    P_res = P_base[:,np.newaxis] * (1-ratio)
+    return P_res
 
 
-def compute_grid_pop(C_r,C_n):
+def compute_grid_pop(P_res,P_nres):
     
-    return C_r + C_n
+    return P_res + P_nres
 
     
 

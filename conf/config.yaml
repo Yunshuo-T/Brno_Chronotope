@@ -1,5 +1,6 @@
 defaults:
   - _self_
+  - params : params
+  - data: data
 
-paths: 
-  root: $hydra.runtime.cwd$
+root: $hydra.runtime.cwd$
